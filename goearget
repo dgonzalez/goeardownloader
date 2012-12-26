@@ -1,0 +1,30 @@
+#!/usr/bin/python
+
+import urllib2
+import sys
+
+urlpattern = """http://www.goear.com/tracker758.php?f=%s"""
+
+def get_download_url(code):
+	return (urlpattern) % code
+
+def parse_song(url):
+	backendurl = get_download_url(url.split("/")[4])
+	return (url.split("/")[5] + ".mp3", urllib2.urlopen(backendurl).read().split('"')[5])
+
+def download(url):
+	"""
+		Downloads the song of the url.
+	"""
+	filename, songurl = parse_song(url)
+	urllib2.urlopen(songurl).read()
+
+	with open(filename, "w") as file:
+		file.write(urllib2.urlopen(songurl).read())
+
+if __name__ == "__main__":
+	
+	if len(sys.argv) == 2:
+		download(sys.argv[1])
+	else:
+		print "usage: goearget <songurl>"
